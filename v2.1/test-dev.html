@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>		
+		<style>
+		body { font:12px/1.3 Arial, Sans-serif; }
+		form { width:380px;padding:0 90px 20px;margin:auto;background:#f7f7f7;border:1px solid #ddd; }
+		div { clear:both;position:relative;margin:0 0 10px; }
+		label { cursor:pointer;display:block; 
+			/* for v2.1 */
+			left:0.5em;
+			position:relative;
+			top:1.75em;
+		
+		}
+		input[type="text"] { width:300px;border:1px solid #999;padding:5px;-moz-border-radius:4px; }
+		input[type="text"]:focus { border-color:#777; }
+		input[name="zip"] { width:150px; }
+		
+		/* submit button */
+		input[type="submit"] { cursor:pointer;border:1px solid #999;padding:5px;-moz-border-radius:4px;background:#eee; }
+		nput[type="submit"]:hover,
+		input[type="submit"]:focus { border-color:#333;background:#ddd; }
+		input[type="submit"]:active{ margin-top:1px; } 
+		input.hint{ background:#eee; }
+		</style>
+		<script type="text/javascript" src="http://rightjs.org/hotlink/right.js"></script>
+		<script type="text/javascript">
+		// <!--
+		var slidingLabelInit = function(e,el) 
+		{
+			el = el || '.slider';
+			//console.log(el);
+				// decouvrir tout les labels
+				$$('.slider label').each( function(label)
+				{
+					var input = $(label.get('for'));
+					// some css to obtain a size for element
+					console.log(input);
+					console.log(label);
+					label.setStyle('display','inline');
+					label.setStyle('position','absolute');
+					var sizes = label.sizes();
+					//var text = label.hide().innerHTML;
+					var text = label.hide().textContent;
+					$ext(input, 
+					{
+						showHint: function() {
+							if (this.value.blank())
+							{
+								//this.addClass('hint').setValue(text.stripX(true));			
+								this.addClass('hint').setValue(text);								
+								label.setStyle({
+									top: sizes.y/2+'px',
+									background: 'white',
+									//left: sizes.x+'px',
+									left: '0px',
+								}).hide();
+
+							}
+						},
+						hideHint: function() {
+						 // if (this.value == text.stripX(true))
+						  if (this.value == text)
+							{
+							this.removeClass('hint').setValue('');
+							label.setStyle('top',sizes.y/2+'px').show();
+							new Fx.Morph(label).start(
+								{
+									background: 'yellow',
+									left: '-'+sizes.x+'px',
+								})
+							}
+						}
+					}).on(
+					{
+						focus: 'hideHint',
+						blur: 'showHint'
+					}).showHint();
+				});
+		};
+		//document.on('ready', slidingLabelInit,'slider');
+		
+		".slider input".on({ 
+			change: function(){ console.log('change');},
+			focus: function() { 
+				var label = this.siblings().first();
+				//var text = label.hide().textContent , dims=label.dimensions() ;	
+				var text = label.textContent, dims=label.dimensions() ;
+				if (this.value.blank())
+						{			
+							this.addClass('hint').setValue(text);								
+							label.setStyle({
+									position: 'absolute',
+									margin: '0',
+									left: 0+'px',
+									top: (0 + dims.height/3)+'px'
+							});
+							//}).hide();
+						}
+			},
+			blur: function() {
+				console.log('blur');
+				// if (this.value == text.stripX(true))
+				var label = this.siblings().first();
+				var sizes = label.sizes();
+				var text = label.hide().textContent;					
+				if (this.value == text)
+				{
+					this.removeClass('hint').setValue('');
+					label.setStyle('top',sizes.y/2+'px').show();
+					console.log( 'start morphing');
+					new Fx.Morph(label).start({
+						background: 'yellow',
+						left: '-'+sizes.x+'px',
+					})
+				}
+			}
+		}); 
+		
+		$ext(String.prototype, 
+		{
+		/**
+		* converts &amp, &lt, & gt to their html string counterpart
+		* @param boolean b. If it equals true &amp will be converted to & etc..
+		*					If it equals false & will be converted to &amp
+		* @return String translated version
+		*/
+			stripX: function(b)
+			{
+				var b = b || false;
+				if (b)
+					return this.replace(/\&amp;/g, '&').replace( /\&lt;/g,'<').replace( /\&gt;/g,'>');
+				else
+					return this.replace(/\&/g, '&amp;').replace( /</g,'&lt;').replace( />/g,'&gt;');
+			}
+		});
+
+		// -->
+		</script>
+	</head>
+	
+	<body>
+	<div id="element-id1"></div>
+	<h1>Sliding Labels Original by <a href="http://www.csskarma.com" rel="home">CSSKarma</a></h1>
+	<p><a href="http://www.csskarma.com/blog/sliding-labels/">Back to the Original article</a></p>
+	<form action="" method="post" id="info">
+		<h2>Contact Information</h2>
+		<div id="name-wrap" class="slider">
+			<label for="name">Name</label>
+			<input type="text" id="name" name="name">
+
+		</div><!--/#name-wrap-->
+		
+		<div id="email-wrap"  class="slider">
+			<label for="email">E&ndash;mail</label>
+			<input type="text" id="email" name="email">
+		</div><!--/#email-wrap-->
+		
+		<div id="street-wrap"  class="slider">
+			<label for="st">Street</label>
+
+			<input type="text" id="st" name="st">
+		</div><!--/#street-wrap-->
+		
+		<div id="city-wrap"  class="slider">
+			<label for="city">City &amp; State</label>
+			<input type="text" id="city" name="city">
+		</div><!--/#city-wrap-->
+		
+		<div id="zip-wrap"  class="slider">
+
+			<label for="zip">Zip code</label>
+			<input type="text" id="zip" name="zip">
+		</div><!--/#zip-wrap-->
+		
+		<input type="submit" id="btn" name="btn" value="submit">
+	</form>
+	
+	</body>
+</html>
